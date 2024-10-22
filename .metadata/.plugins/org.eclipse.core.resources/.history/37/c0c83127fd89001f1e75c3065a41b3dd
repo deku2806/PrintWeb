@@ -1,0 +1,60 @@
+package Admin.Controller;
+
+import java.time.LocalDateTime;
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import Admin.Models.Delivery;
+import Admin.Models.ShippingMethod;
+import Admin.Repository.DeliveryRepository;
+import Admin.Repository.ShippingMethodRepository;
+
+@RestController
+@RequestMapping("api/delivery")
+public class DeliveryController {
+	@Autowired
+	private DeliveryRepository deliveryRepo;
+	@Autowired
+	private ShippingMethodRepository shippingMethodRepo;
+	
+	@GetMapping("/allDelivery")
+	public ResponseEntity<?> getAll(){
+		List<Delivery> delivery = deliveryRepo.findAll();
+		return ResponseEntity.ok(delivery);
+	}
+	
+	@GetMapping("/deliveryByProject")
+	public ResponseEntity<?> getByProjectName(){
+		List<Delivery> delivery = deliveryRepo.findAll();
+		return ResponseEntity.ok(delivery);
+	}
+	
+	@PostMapping("/shipping")
+    public ResponseEntity<?> shipProject(@RequestBody Delivery delivery) {
+        Optional<Delivery> deliveryOpt = deliveryRepo.findById(delivery.getId());
+        if(deliveryOpt.isEmpty()) {
+        	return ResponseEntity.badRequest().body("FAIL");
+        }
+        delivery.setStatus(Delivery.DeliveryStatus.DA_VAN_CHUYEN);
+        delivery.setEstimateDeliveryTime(delivery.getEstimateDeliveryTime()); 
+        delivery.setDeliveryId(delivery.getDeliveryId());
+        Delivery savedDelivery = deliveryRepo.save(delivery);
+        return ResponseEntity.ok(savedDelivery);
+    }
+	
+	@PostMapping("/create")
+    public ResponseEntity<?> createDelivery(@RequestBody Delivery delivery) {
+        delivery.setStatus(Delivery.DeliveryStatus.DANG_GIAO);
+        Delivery savedDelivery = deliveryRepo.save(delivery);
+        return ResponseEntity.ok(savedDelivery);
+    }
+	
+	@GetMapping("/method")
+	public ResponseEntity<?> getAllMethod(){
+		List<ShippingMethod> method = shippingMethodRepo.findAll();
+		return ResponseEntity.ok(method);
+	}
+}

@@ -1,0 +1,15 @@
+package Admin.Controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import Admin.Models.Bill;
+
+@RestController
+@RequestMapping("api/bill")
+public class BillController {
+	Bill dataBill = billRepo.findByName(projectName);
+	if(dataBill==null) {
+		return ResponseEntity.badRequest().body("Không tìm thấy bill");
+	}
+}
